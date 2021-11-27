@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
 
 func main() {
-	fmt.Println(getSourceCode("input.c"))
+	sourcCode := getSourceCode("input.txt")
+	lex(sourcCode)
+	
 }
