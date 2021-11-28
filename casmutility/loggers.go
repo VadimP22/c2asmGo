@@ -25,3 +25,20 @@ func NewConsoleLogger(prefix string) Logger {
 	logger.prefix = "[" + prefix + "]"
 	return logger
 }
+
+
+//VOID LOGGER
+type VoidLogger struct {
+	prefix string
+}
+
+
+func (logger VoidLogger) Println(msg string) {
+
+}
+
+
+func NewVoidLogger() Logger {
+	var logger VoidLogger
+	return logger
+}

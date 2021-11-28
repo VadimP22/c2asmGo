@@ -1,6 +1,8 @@
 package casmlex
 
+
 import "testing"
+
 
 func TestIsInSlice(t *testing.T) {
 	mainSlice := []string{"a", "b", "cd", "hello", "world"}
