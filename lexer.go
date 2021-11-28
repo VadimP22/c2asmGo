@@ -29,6 +29,41 @@ func lex(sourceCode string) {
 
 	for i < sourcesLen {
 		sym := sourceCode[i]
+		symstr := string(sym)
+
+		if isBracket(sym) {
+			fmt.Println(symstr)
+		}
+
+		if isStringSeparator(sym) {
+			fmt.Println("STR_SEP")
+		}
+
+		if isOperator(sym) {
+			complexOperator := isComplexOperator(symstr + string(sourceCode[i + 1]))
+
+			if complexOperator {
+				fmt.Println("complex:", symstr + string(sourceCode[i + 1]))
+			} else {
+				fmt.Println("simple:", symstr)
+			}
+
+			i = i + 1
+		}
+
+		if isNumber(sym) {
+			j := i
+			number := ""
+
+			for isNumber(sourceCode[j]) {
+				number = number + string(sourceCode[j])
+				j = j + 1
+			}
+
+			fmt.Println(number)
+
+			i = j - 1
+		}
 
 		if isChar(sym) {
 
@@ -45,9 +80,8 @@ func lex(sourceCode string) {
 				fmt.Println(identifier)
 			}
 
-			i = j
+			i = j - 1
 		}
-
 
 		i = i + 1
 
