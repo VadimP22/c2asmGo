@@ -1,8 +1,12 @@
 package casmlex
 
-import "fmt"
 
-func Lex(sourceCode string) {
+import (
+	"../casmutility"
+)
+
+
+func Lex(sourceCode string, logger casmutility.Logger) []casmutility.Token{
 	sourceCode = sourceCode + "\n"
 	sourcesLen := len(sourceCode)
 	i := 0
@@ -12,20 +16,20 @@ func Lex(sourceCode string) {
 		symstr := string(sym)
 
 		if isBracket(sym) {
-			fmt.Println(symstr)
+			logger.Println(symstr)
 		}
 
 		if isStringSeparator(sym) {
-			fmt.Println("STR_SEP")
+			logger.Println("string_separator")
 		}
 
 		if isOperator(sym) {
 			complexOperator := isComplexOperator(symstr + string(sourceCode[i + 1]))
 
 			if complexOperator {
-				fmt.Println("complex:", symstr + string(sourceCode[i + 1]))
+				logger.Println("operator: " + symstr + string(sourceCode[i + 1]))
 			} else {
-				fmt.Println("simple:", symstr)
+				logger.Println("operator: " + symstr)
 			}
 
 			i = i + 1
@@ -40,7 +44,7 @@ func Lex(sourceCode string) {
 				j = j + 1
 			}
 
-			fmt.Println(number)
+			logger.Println("number: " + number)
 
 			i = j - 1
 		}
@@ -57,7 +61,7 @@ func Lex(sourceCode string) {
 			}
 
 			if identifier != "\r" {
-				fmt.Println(identifier)
+				logger.Println("identifier: " + identifier)
 			}
 
 			i = j - 1
@@ -66,4 +70,7 @@ func Lex(sourceCode string) {
 		i = i + 1
 
 	}
+
+
+	return nil
 }
