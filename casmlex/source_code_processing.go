@@ -1,20 +1,6 @@
 package casmlex
 
 
-import "io/ioutil"
-
-
-func GetSourceCode(filepath string) string {
-	sourceCode, err := ioutil.ReadFile(filepath)
-
-	if err != nil {
-		panic("can't read souce code from file " + filepath)
-	}
-
-	return string(sourceCode)
-}
-
-
 func isInSlice(input string, slice []string) bool {
 	for _, str := range slice {
 		if str == input {
@@ -85,6 +71,13 @@ func isBracket(input byte) bool {
 	brackets := []byte{'{', '}', '[', ']', '(', ')'}
 
 	return isByteInSlice(input, brackets)
+}
+
+
+func isOpenBracket(input byte) bool {
+	openBrackets := []byte{'{', '[', '('}
+
+	return isByteInSlice(input, openBrackets)
 }
 
 

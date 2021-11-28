@@ -53,3 +53,21 @@ func TestGetSourceCode (t *testing.T) {
 	
 	GetSourceCode("file.txt")
 }
+
+
+func TestIsOpenBracket(t *testing.T) {
+	openBrackets := []byte{'(', '[', '{'}
+	closeBrackets := []byte{')', ']', '}'}
+
+	for _, bracket := range openBrackets {
+		if !isOpenBracket(bracket) {
+			t.Error("for", string(bracket), "expected true, got false")
+		}
+	} 
+
+	for _, bracket := range closeBrackets {
+		if isOpenBracket(bracket) {
+			t.Error("for", string(bracket), "expected false, got true")
+		}
+	} 
+}
