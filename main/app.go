@@ -36,6 +36,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	err = casmutility.CheckEntryFunction("main", functionsDefinitions)
+	if err != nil {
+		errorLogger.Println(err.Error())
+		os.Exit(1)
+	}
+	
+
 	_ = fileName
 	_ = functionsDefinitions
 	_ = args

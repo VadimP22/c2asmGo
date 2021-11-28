@@ -53,3 +53,22 @@ func ParseArgs(args []string, logger Logger) (string, []string) {
 		return filename, pureArgs
 	}
 }
+
+
+func CheckEntryFunction(name string, defs []FunctionDefinition) error {
+	for _, function := range defs {
+		if function.GetName() == name {
+			if function.GetReturnType() == "int" {
+				return nil
+			}
+		}
+	}
+
+	return errors.New("there's no entry function [int " + name + "()] in your file")
+}
+
+
+//TODO
+func getArgValue(arg string) (string, error) {
+	return "", nil
+}

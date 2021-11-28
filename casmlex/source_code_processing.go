@@ -22,7 +22,7 @@ func isByteInSlice(input byte, slice []byte) bool {
 
 
 func isKeyword(input string) bool {
-	keywords := []string{"else", "if", "while", "return", "void", "for", "continue", "break", "const", "struct", "struct", "sizeof"}
+	keywords := []string{"else", "if", "while", "return", "for", "continue", "break", "const", "struct", "struct", "sizeof"}
 	return isInSlice(input, keywords)
 }
 
