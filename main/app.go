@@ -1,25 +1,42 @@
 package main
 
 import (
+	"os"
+
 	"../casmlex"
+	"../casmparse"
 	"../casmutility"
 )
 
 
 func main() {
+	argsParserLogger := casmutility.NewConsoleLogger("ARGSPARSER")
 	mainLogger := casmutility.NewConsoleLogger("MAIN")
 	lexerLogger := casmutility.NewConsoleLogger("LEXER")
+	parserLogger := casmutility.NewConsoleLogger("PARSER")
 	errorLogger := casmutility.NewConsoleLogger("ERROR")
 
-	fileName := "input.txt"
-	mainLogger.Println("input file: " + fileName)
+	mainLogger.Println("Parsing input args")
+	fileName, args := casmutility.ParseArgs(os.Args, argsParserLogger)
 
-	sourceCode, err := casmutility.GetSourceCode(fileName)
+	sourceCode, err := casmutility.GetSourceCode(fileName, mainLogger)
 	if err != nil {
 		errorLogger.Println("can't open '" + fileName + "':")
 		errorLogger.Println(err.Error())
+		os.Exit(1)
 	}
 
+	mainLogger.Println("Lexing started")
 	tokens := casmlex.Lex(sourceCode, lexerLogger)
-	_ = tokens
+
+	mainLogger.Println("Finding functions definitions")
+	functionsDefinitions, err := casmparse.FindFunctionsDefinitions(tokens, parserLogger)
+	if err != nil {
+		errorLogger.Println(err.Error())
+		os.Exit(1)
+	}
+
+	_ = fileName
+	_ = functionsDefinitions
+	_ = args
 }
