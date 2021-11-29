@@ -1,26 +1,4 @@
 int main()
 {
-    int a = sum(1, 2);
-    return 10 + a;
-}
-
-int sum(int a, int b)
-{
-    if (a >= 10)
-    {
-        return 100;
-    }
-
-    b = -44;
-    int d = &b;
-
-    if (a < 100) {
-        a = a - 1
-    }
-
-    return a+b;
-}
-
-void test(int ll) {
-    
+    int a = (33 - 55) + (12 * 4);
 }

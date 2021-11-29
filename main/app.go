@@ -42,7 +42,9 @@ func main() {
 		os.Exit(1)
 	}
 	
+	root := casmparse.ParseFunctions(functionsDefinitions, tokens, parserLogger)
 
+	_ = root
 	_ = fileName
 	_ = functionsDefinitions
 	_ = args
