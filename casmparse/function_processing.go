@@ -2,8 +2,6 @@ package casmparse
 
 import (
 	"errors"
-	"fmt"
-
 	"../casmutility"
 )
 
@@ -76,7 +74,7 @@ func ParseFunctions(funcs []casmutility.FunctionDefinition, tokens []casmutility
 
 
 func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
-	return errors.New("func parseFunction(" + name +  "): WORK IN PROGRESS")
+	//eturn errors.New("func parseFunction(" + name +  "): WORK IN PROGRESS")
 
 	i := 0
 	for i < len(tokens) {
@@ -101,8 +99,8 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
 
 //NOT WORKING
 func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
-	//typename := tokens[i - 2]
 	left := tokens[i - 1]
+	typename := tokens[i - 2]
 
 	if left.GetType() != "identifier" {
 		return errors.New("")
@@ -117,51 +115,11 @@ func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
 	}
 	right := tokens [i + 1 : j]
 
-	fmt.Println(left, " = ", right)
+	na := node.AddChild("=", "")
+	na.AddChild("identifier", left.GetValue())
+	na.AddChild("+", "nil")
 
-	set := node.AddChild("=", "")
-	set.AddChild("left", left.GetValue())
-	mathNode := set.AddChild("right", "")
-
-	parseMathExpression(right, mathNode)
-
+	_ = right
+	_ = typename
 	return nil
-}
-
-
-//NOT WORKING
-func parseMathExpression(expression []casmutility.Token, node *Node) {
-	for i := 0; i < len(expression); i++ {
-		exp := expression[i]
-		if exp.GetType() == "bracket_open" {
-			fmt.Println("returnBrackets")
-			parseMathExpression(returnBrackets(expression, node, i), node)
-		}
-	}
-}
-
-
-//NOT WORKING
-func returnBrackets(expression []casmutility.Token, node *Node, i int) []casmutility.Token {
-	j := i
-	open, close := 0, 0
-	var retTokens []casmutility.Token
-
-	for {
-		exp := expression[j]
-		if exp.GetType() == "bracket_open" {
-			open = open + 1
-		}
-		if exp.GetType() == "bracket_close" {
-			close = close + 1
-		}
-		if open == close {
-			break
-		}
-		j = j + 1
-	}
-	retTokens = expression[i + 1 : j]
-	fmt.Println(retTokens)
-
-	return retTokens
 }

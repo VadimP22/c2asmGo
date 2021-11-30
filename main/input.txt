@@ -2,3 +2,8 @@ int main()
 {
     int a = 33;
 }
+
+void lol()
+{
+    return 33;
+}

@@ -6,6 +6,7 @@ import (
 	"../casmlex"
 	"../casmparse"
 	"../casmutility"
+	"../casmdebug"
 )
 
 
@@ -43,6 +44,7 @@ func main() {
 	}
 	
 	root := casmparse.ParseFunctions(functionsDefinitions, tokens, parserLogger)
+	casmdebug.DisplayTree(root)
 
 	_ = root
 	_ = fileName
