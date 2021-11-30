@@ -1,6 +1,7 @@
 package casmparse
 
 import (
+	"errors"
 	"fmt"
 
 	"../casmutility"
@@ -64,32 +65,49 @@ func ParseFunctions(funcs []casmutility.FunctionDefinition, tokens []casmutility
 	for _, def := range funcs {
 		funTokens := getFunctionTokens(def.GetName(), funcs, tokens)
 		funNode := root.AddChild("function", def.GetName())
-		parseFunction(funTokens, funNode)
+		err := parseFunction(funTokens, funNode, def.GetName())
+		if err != nil {
+			logger.Println(err.Error())
+		}
 	}
 
 	return root
 }
 
 
-func parseFunction(tokens []casmutility.Token, node *Node) {
+func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
+	return errors.New("func parseFunction(" + name +  "): WORK IN PROGRESS")
+
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
 
 		if token.GetType() == "operator" {
 			if token.GetValue() == "=" {
-				parseAssignment(tokens, node, i)
+				err := parseAssignment(tokens, node, i)
+				if err != nil {
+					return errors.New("function " + name + ": token[" + string(i) + "] left identifier expected")
+				}
 			}
 		}
 
 
 		i = i + 1
 	}
+
+	return nil
 }
 
 
-func parseAssignment(tokens []casmutility.Token, node *Node, i int) {
+//NOT WORKING
+func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
+	//typename := tokens[i - 2]
 	left := tokens[i - 1]
+
+	if left.GetType() != "identifier" {
+		return errors.New("")
+	}
+
 	j := i + 1
 	for {
 		if tokens[j].GetType() == "string_separator" {
@@ -101,17 +119,17 @@ func parseAssignment(tokens []casmutility.Token, node *Node, i int) {
 
 	fmt.Println(left, " = ", right)
 
-	set := node.AddChild("set", "set")
-	set.AddChild("identifier", left.GetValue())
-	mathNode := set.AddChild("expression", "")
+	set := node.AddChild("=", "")
+	set.AddChild("left", left.GetValue())
+	mathNode := set.AddChild("right", "")
 
 	parseMathExpression(right, mathNode)
 
-	
+	return nil
 }
 
 
-//TODO
+//NOT WORKING
 func parseMathExpression(expression []casmutility.Token, node *Node) {
 	for i := 0; i < len(expression); i++ {
 		exp := expression[i]
@@ -123,7 +141,7 @@ func parseMathExpression(expression []casmutility.Token, node *Node) {
 }
 
 
-//TODO
+//NOT WORKING
 func returnBrackets(expression []casmutility.Token, node *Node, i int) []casmutility.Token {
 	j := i
 	open, close := 0, 0
