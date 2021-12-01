@@ -2,6 +2,8 @@ package casmparse
 
 import (
 	"errors"
+	"fmt"
+
 	"../casmutility"
 )
 
@@ -97,7 +99,8 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
 }
 
 
-//NOT WORKING
+//working, but WIP
+//TODO
 func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
 	left := tokens[i - 1]
 	typename := tokens[i - 2]
@@ -117,9 +120,65 @@ func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
 
 	na := node.AddChild("=", "")
 	na.AddChild("identifier", left.GetValue())
-	na.AddChild("+", "nil")
+	expNode := na.AddChild("expression", "")
+	parseMathExpression(right, expNode)
 
 	_ = right
 	_ = typename
 	return nil
+}
+
+
+func parseMathExpression(tokens []casmutility.Token, root *Node) {
+	if tokens[0].GetType() == "bracket_open" && tokens[len(tokens) - 1].GetType() == "bracket_close" {
+		tokens = tokens[1:len(tokens) - 1]
+	}
+	fmt.Println("parse", tokens)
+
+	left, right, isTwo := separateByToken(tokens, '+')
+	if isTwo {
+		newNode := root.AddChild("+", "")
+		parseMathExpression(left, newNode)
+		parseMathExpression(right, newNode)
+	} else {
+		left1, right1, isTwo1 := separateByToken(tokens, '-')
+		if isTwo1 {
+			newNode1 := root.AddChild("-", "")
+			parseMathExpression(left1, newNode1)
+			parseMathExpression(right1, newNode1)
+		} else {
+			left2, right2, isTwo2 := separateByToken(tokens, '*')
+			if isTwo2 {
+				newNode2 := root.AddChild("*", "")
+				parseMathExpression(left2, newNode2)
+				parseMathExpression(right2, newNode2)
+			} else {
+				root.AddChild(left2[0].GetValue(), "")
+			}
+		}
+	}
+}
+
+
+func  separateByToken(tokens []casmutility.Token,separator byte) ([]casmutility.Token, []casmutility.Token, bool) {
+	sepChar := string(separator)
+	open, close := 0, 0
+	for i := 0; i < len(tokens); i++ {
+		curr := tokens[i]
+
+		if curr.GetType() == "bracket_open" {
+			open += 1
+		}
+
+		if curr.GetType() == "bracket_close" {
+			close += 1
+		}
+
+		if curr.GetType() == "operator" && curr.GetValue() == sepChar {
+			if open == close {
+				return tokens[:i], tokens[i + 1:], true
+			}
+		}
+	}
+	return tokens, nil, false
 }

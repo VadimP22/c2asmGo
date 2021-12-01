@@ -1,6 +1,7 @@
 int main()
 {
-    int a = 33;
+    int a = (33 + b)*c;
+    int n = 134*a;
 }
 
 void lol()
