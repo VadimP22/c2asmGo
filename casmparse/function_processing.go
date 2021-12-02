@@ -64,7 +64,7 @@ func ParseFunctions(funcs []casmutility.FunctionDefinition, tokens []casmutility
 	for _, def := range funcs {
 		funTokens := getFunctionTokens(def.GetName(), funcs, tokens)
 		funNode := root.AddChild("function", def.GetName())
-		err := parseFunction(funTokens, funNode, def.GetName())
+		err := parseFunction(funTokens, funNode, def.GetName(), logger)
 		if err != nil {
 			logger.Println(err.Error())
 		}
@@ -74,18 +74,24 @@ func ParseFunctions(funcs []casmutility.FunctionDefinition, tokens []casmutility
 }
 
 
-func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
-	//eturn errors.New("func parseFunction(" + name +  "): WORK IN PROGRESS")
+func parseFunction(tokens []casmutility.Token, node *Node, name string, logger casmutility.Logger) error {
+	//return errors.New("func parseFunction(" + name +  "): WORK IN PROGRESS")
 
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
 
+		//assignment parsing
 		if token.GetType() == "operator" {
 			if token.GetValue() == "=" {
-				err := parseAssignment(tokens, node, i)
-				if err != nil {
-					return errors.New("function " + name + ": token[" + string(strconv.Itoa(i)) + "] left identifier expected")
+				if isSimpleAssignment(tokens, i, logger) {
+					logger.Println("Parsing assignment: token[" + strconv.Itoa(i) + "]")
+					err := parseAssignment(tokens, node, i)
+					if err != nil {
+						return errors.New("function " + name + ": token[" + string(strconv.Itoa(i)) + "] left identifier expected")
+					}
+				} else {
+					logger.Println("assignment than causes function call parsing is WIP")
 				}
 			}
 		}
@@ -98,8 +104,34 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
 }
 
 
-//working, but WIP
-//TODO
+//complex assignment means assignment causes function call,
+//simple - not causes 
+func isSimpleAssignment(tokens []casmutility.Token, i int, logger casmutility.Logger) bool {
+	var j int = i + 1
+	var current, next casmutility.Token
+	prefixString := "    "
+
+	current = tokens[j]
+
+	for tokens[j].GetType() != "string_separator" {
+		next = tokens[j]
+
+		if current.GetType() == "identifier" {
+			if next.GetType() == "bracket_open" {
+				logger.Println("Complex assignment found:")
+				logger.Println(prefixString + current.GetValue())
+				return false
+			}
+		}
+
+		j += 1
+		current = next
+	}
+
+	return true
+}
+
+
 func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
 	left := tokens[i - 1]
 	typename := tokens[i - 2]
@@ -152,14 +184,14 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 				parseMathExpression(left2, newNode2)
 				parseMathExpression(right2, newNode2)
 			} else {
-				root.AddChild(left2[0].GetValue(), "")
+				root.AddChild(left2[0].GetType(), left2[0].GetValue())
 			}
 		}
 	}
 }
 
 
-func  separateByToken(tokens []casmutility.Token,separator byte) ([]casmutility.Token, []casmutility.Token, bool) {
+func separateByToken(tokens []casmutility.Token,separator byte) ([]casmutility.Token, []casmutility.Token, bool) {
 	sepChar := string(separator)
 	open, close := 0, 0
 	for i := 0; i < len(tokens); i++ {

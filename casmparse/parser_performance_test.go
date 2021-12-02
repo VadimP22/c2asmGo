@@ -21,6 +21,7 @@ func BenchmarkParser(b *testing.B) {
 
 	tokens := casmlex.Lex(testString, logger)
 
+	
 	b.ResetTimer()
 	functionsDefinitions, _ := FindFunctionsDefinitions(tokens, logger)
 	root := ParseFunctions(functionsDefinitions, tokens, logger)
