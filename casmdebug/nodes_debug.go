@@ -14,9 +14,9 @@ func DisplayTree(root *casmparse.Node)  {
 }
 
 
-func visualizeTree(root *casmparse.Node, level int) {
-	
-	fmt.Println(mulStr("-", level), root.GetType(), ":", root.GetValue())
+func visualizeTree(root *casmparse.Node, level uint) {
+	printLevelSymbol(level)
+	fmt.Println(root.GetType(), ":", root.GetValue())
 	
 	for _, node := range root.GetChilds() {
 		visualizeTree(node, level + 1)
@@ -25,9 +25,8 @@ func visualizeTree(root *casmparse.Node, level int) {
 }
 
 
-func mulStr(str string, n int) string {
-	for i := 0; i < n; i++ {
-		str = str + str
+func printLevelSymbol(level uint) {
+	for i := 0; i < int(level); i++ {
+		fmt.Print("-")
 	}
-	return str
 }

@@ -2,8 +2,7 @@ package casmparse
 
 import (
 	"errors"
-	"fmt"
-
+	"strconv"
 	"../casmutility"
 )
 
@@ -86,7 +85,7 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string) error {
 			if token.GetValue() == "=" {
 				err := parseAssignment(tokens, node, i)
 				if err != nil {
-					return errors.New("function " + name + ": token[" + string(i) + "] left identifier expected")
+					return errors.New("function " + name + ": token[" + string(strconv.Itoa(i)) + "] left identifier expected")
 				}
 			}
 		}
@@ -133,7 +132,7 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 	if tokens[0].GetType() == "bracket_open" && tokens[len(tokens) - 1].GetType() == "bracket_close" {
 		tokens = tokens[1:len(tokens) - 1]
 	}
-	fmt.Println("parse", tokens)
+	//fmt.Println("parse", tokens)
 
 	left, right, isTwo := separateByToken(tokens, '+')
 	if isTwo {

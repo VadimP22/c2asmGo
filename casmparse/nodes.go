@@ -23,9 +23,11 @@ func (n *Node) GetChilds() []*Node {
 	return n.childs
 }
 
+
 func (n *Node) GetParent() *Node {
 	return n.parent
 }
+
 
 func (n *Node) AddChild(childType, childValue string) *Node{
 	child := NewNode(childType, childValue)
@@ -33,6 +35,7 @@ func (n *Node) AddChild(childType, childValue string) *Node{
 	n.childs = append(n.childs, child)
 	return child
 }
+
 
 func NewNode(type_, value string) *Node {
 	node := new(Node)
