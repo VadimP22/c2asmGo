@@ -98,3 +98,11 @@ func isComplexOperator(input string) bool{
 func isStringSeparator(input byte) bool {
 	return input == ';'
 }
+
+func isComma(input byte) bool {
+	if string(input) == "," {
+		return true
+	}
+	
+	return false
+}

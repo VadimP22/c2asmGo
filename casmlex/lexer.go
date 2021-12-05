@@ -27,6 +27,11 @@ func Lex(sourceCode string, logger casmutility.Logger) []casmutility.Token{
 			}
 		}
 
+		if isComma(sym) {
+			tokens = append(tokens, casmutility.NewToken("comma", ","))
+			logger.Println("comma: ,")
+		}
+
 		if isStringSeparator(sym) {
 			logger.Println("string_separator")
 			tokens = append(tokens, casmutility.NewToken("string_separator", ""))

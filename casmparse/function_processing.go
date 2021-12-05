@@ -4,6 +4,7 @@ import (
 	"errors"
 	//"fmt"
 	"strconv"
+
 	"../casmutility"
 )
 
@@ -157,7 +158,11 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 					root.AddChild(left2[0].GetType(), left2[0].GetValue())
 				} else {
 					fncall := root.AddChild("function_call", left2[0].GetValue())
-					parseCallArgs(left2[1 : ], fncall)
+					args := separateOnSeveralTokensByComma(left2[2:])
+
+					for _, arg := range args {
+						parseMathExpression(arg, fncall)
+					}
 				}
 			}
 		}
@@ -165,12 +170,27 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 }
 
 
-func parseCallArgs(tokens []casmutility.Token, root *Node)  {
-	for _, token := range tokens {
-		if token.GetType() != "bracket_open" && token.GetType() != "bracket_close" {
-			root.AddChild(token.GetType(), token.GetValue())
+func separateOnSeveralTokensByComma(tokens []casmutility.Token)  [][]casmutility.Token {
+	var result [][]casmutility.Token
+	last := 0
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+
+		if i == len(tokens) - 1 {
+			result = append(result, tokens[last : i])
+			return result
 		}
+
+		if token.GetType() == "comma" {
+			result = append(result, tokens[last : i])
+			last = i + 1
+		}
+
+		i += 1
 	}
+
+	return result
 }
 
 
