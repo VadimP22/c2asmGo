@@ -29,7 +29,7 @@ func NewConsoleLogger(prefix string) Logger {
 
 //VOID LOGGER
 type VoidLogger struct {
-	prefix string
+	//prefix string
 }
 
 

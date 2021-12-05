@@ -1,6 +1,7 @@
 int main()
 {
-    int a = 33*call(666);
+    int z = 5;
+    int a = 33*call(10, z);
     int n = 134*a;
 }
 

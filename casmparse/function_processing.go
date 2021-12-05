@@ -2,6 +2,7 @@ package casmparse
 
 import (
 	"errors"
+	//"fmt"
 	"strconv"
 	"../casmutility"
 )
@@ -84,14 +85,10 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string, logger c
 		//assignment parsing
 		if token.GetType() == "operator" {
 			if token.GetValue() == "=" {
-				if isSimpleAssignment(tokens, i, logger) {
-					logger.Println("Parsing assignment: token[" + strconv.Itoa(i) + "]")
-					err := parseAssignment(tokens, node, i)
-					if err != nil {
-						return errors.New("function " + name + ": token[" + string(strconv.Itoa(i)) + "] left identifier expected")
-					}
-				} else {
-					logger.Println("assignment than causes function call parsing is WIP")
+				logger.Println("Parsing assignment: token[" + strconv.Itoa(i) + "]")
+				err := parseAssignment(tokens, node, i)
+				if err != nil {
+					return errors.New("function " + name + ": token[" + string(strconv.Itoa(i)) + "] left identifier expected")
 				}
 			}
 		}
@@ -101,34 +98,6 @@ func parseFunction(tokens []casmutility.Token, node *Node, name string, logger c
 	}
 
 	return nil
-}
-
-
-//complex assignment means assignment causes function call,
-//simple - not causes 
-func isSimpleAssignment(tokens []casmutility.Token, i int, logger casmutility.Logger) bool {
-	var j int = i + 1
-	var current, next casmutility.Token
-	prefixString := "    "
-
-	current = tokens[j]
-
-	for tokens[j].GetType() != "string_separator" {
-		next = tokens[j]
-
-		if current.GetType() == "identifier" {
-			if next.GetType() == "bracket_open" {
-				logger.Println("Complex assignment found:")
-				logger.Println(prefixString + current.GetValue())
-				return false
-			}
-		}
-
-		j += 1
-		current = next
-	}
-
-	return true
 }
 
 
@@ -184,8 +153,22 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 				parseMathExpression(left2, newNode2)
 				parseMathExpression(right2, newNode2)
 			} else {
-				root.AddChild(left2[0].GetType(), left2[0].GetValue())
+				if len(left2) == 1 {
+					root.AddChild(left2[0].GetType(), left2[0].GetValue())
+				} else {
+					fncall := root.AddChild("function_call", left2[0].GetValue())
+					parseCallArgs(left2[1 : ], fncall)
+				}
 			}
+		}
+	}
+}
+
+
+func parseCallArgs(tokens []casmutility.Token, root *Node)  {
+	for _, token := range tokens {
+		if token.GetType() != "bracket_open" && token.GetType() != "bracket_close" {
+			root.AddChild(token.GetType(), token.GetValue())
 		}
 	}
 }
