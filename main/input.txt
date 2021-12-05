@@ -1,8 +1,6 @@
 int main()
 {
-    int z = 5;
-    int a = 33*call(10 + z, (z + 5)*33);
-    int n = 134*a;
+    int z = call(33, call(newfunct(44, 44), another(33*77, fwfwf)));
 }
 
 void lol()

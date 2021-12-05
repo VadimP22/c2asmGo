@@ -2,6 +2,7 @@ package casmparse
 
 import (
 	"errors"
+	"fmt"
 	//"fmt"
 	"strconv"
 
@@ -115,6 +116,7 @@ func parseAssignment(tokens []casmutility.Token, node *Node, i int) error {
 		if tokens[j].GetType() == "string_separator" {
 			break
 		}
+
 		j = j + 1
 	}
 	right := tokens [i + 1 : j]
@@ -171,11 +173,21 @@ func parseMathExpression(tokens []casmutility.Token, root *Node) {
 
 
 func separateOnSeveralTokensByComma(tokens []casmutility.Token)  [][]casmutility.Token {
+	fmt.Println(tokens)
+	open, close := 0, 0
 	var result [][]casmutility.Token
 	last := 0
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
+
+		if token.GetType() == "bracket_open" {
+			open += 1
+		}
+
+		if token.GetType() == "bracket_close" {
+			close += 1
+		}
 
 		if i == len(tokens) - 1 {
 			result = append(result, tokens[last : i])
@@ -183,8 +195,10 @@ func separateOnSeveralTokensByComma(tokens []casmutility.Token)  [][]casmutility
 		}
 
 		if token.GetType() == "comma" {
-			result = append(result, tokens[last : i])
-			last = i + 1
+			if open == close {
+				result = append(result, tokens[last : i])
+				last = i + 1
+			}
 		}
 
 		i += 1
